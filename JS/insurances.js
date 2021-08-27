@@ -23,15 +23,16 @@ class Cotizacion {
 
     cotizar() {
         let dolarHoy = localStorage.getItem("dolar");
-        const aseguradora = this.aseguradoras.filter(aseguradora => aseguradora.name === this.aseguradora);
-        const riesgo = this.tiposDeRiesgo.filter(riesgo => riesgo.name === this.riesgo);
+        const aseguradora = this.aseguradoras.filter(aseguradora => aseguradora.nombre === this.aseguradora, "")[0];
+        const riesgo = this.tiposDeRiesgo.filter(riesgo => riesgo.nombre === this.riesgo, "")[0];
         console.log(aseguradora, riesgo);
 
         $.ajax("https://www.dolarsi.com/api/api.php?type=valoresprincipales").done(function(cotiz) {
-            const nuevoDolar = cotiz.filter((dolar) => dolar["casa"].nombre === "Dólar Blue").reduce((dolar) => dolar.venta);
-            if(dolarHoy != nuevoDolar) {
-                dolarHoy = nuevoDolar;
-                localStorage.setItem("dolar", nuevoDolar);
+            const nuevoDolar = cotiz.filter((dolar) => dolar["casa"].nombre === "Dolar Oficial")[0];
+            console.log(nuevoDolar)
+            if(nuevoDolar && dolarHoy != nuevoDolar.casa.venta) {
+                dolarHoy = nuevoDolar.casa.venta;
+                localStorage.setItem("dolar", nuevoDolar.casa.venta);
             }
         }).catch(function(error){
             console.alert("Hubo un error en la cotización!");
@@ -39,10 +40,13 @@ class Cotizacion {
         });
 
         if(riesgo && aseguradora) {
-            this.total = aseguradora.price * riesgo.multiplicador;
+            dolarHoy = dolarHoy.replace(",", ".");
+            console.log(parseFloat(dolarHoy) , aseguradora.precio , riesgo.multiplicador)
+            let total = parseFloat(dolarHoy) * aseguradora.precio * riesgo.multiplicador;
             if(this.personaJuridica) {
-                this.total = this.total * 1.21;
+                total = total * 1.21;
             }
+            this.total = total;
             this.productor = aseguradora.productor;
         }
 
@@ -62,13 +66,14 @@ function cotizar(e) {
     const riesgo = $("#form #riesgo").val();
     const aseguradora = $("#form #aseguradora").val();
     const juridica = $("#form #juridica").prop("checked");
-    const cotizacion = (new Cotizacion(riesgo, juridica, aseguradora)).cotizar();
-    const total = cotizacion["total"];
+    const cotizacion = (new Cotizacion(riesgo, juridica, aseguradora));
+    const cotizar = cotizacion.cotizar();
+    const total = cotizar["total"];
+    const productor = cotizar["productor"];
     const totalAnual = cotizacion.cotizarAnual();
-    const productor = cotizacion["productor"];
      
 
-    $("#result").html(`<div><h2>Total por mes: ${total} <small>Precio por 12 meses: ${totalAnual}</small></h2><h3>Su productor: ${productor}</h3></div>`)
+    $("#result").html(`<div><h2>Total por mes: $${total} <small>Precio por 12 meses: $${totalAnual}</small></h2><h3>Su productor: ${productor}</h3></div>`)
     return false;
 }
 
