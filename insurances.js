@@ -4,15 +4,15 @@ class Cotizacion {
     tiposDeRiesgo = [
         {nombre: "Todo riesgo", multiplicador: 3},
         {nombre: "Terceros", multiplicador: 2},
-        {nombre: "Básico", multiplicador: 2},
+        {nombre: "Básico", multiplicador: 1},
     ]; 
 
     aseguradoras = [
-        {nombre: "La Segunda", precio: 100, productor: "Alfonso Ribotril"},
-        {nombre: "La nueva", precio: 300, productor: "Vicente Monero"},
+        {nombre: "La Segunda", precio: 120, productor: "Alfonso Ribotril"},
+        {nombre: "La nueva", precio: 180, productor: "Vicente Monero"},
         {nombre: "San Cristobal", precio: 200, productor: "Fernando Brown"},
-        {nombre: "Boston", precio: 400, productor: "Ricardo Liniers"},
-        {nombre: "La caja", precio: 500, productor: "Lionel Limbo"},
+        {nombre: "Boston", precio: 245, productor: "Ricardo Liniers"},
+        {nombre: "La caja", precio: 300, productor: "Lionel Limbo"},
     ];
 
     constructor(riesgo = "", personaJuridica = false, aseguradora = "") {
