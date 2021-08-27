@@ -10,15 +10,28 @@
 </head>
 <body>
     <main>
-        <h1>¿Buscando un seguro?</h1>
-        <h2>El mejor seguro para su precio.</h2>
-        <p>Ingrese cuánto quiere abonar por su seguro.<br><strong>El resultado estará en la consola ✨</strong></p>
+        <h1>¿Cuál es el mejor seguro para su auto?</h1>
+        <h2>Complete los campos para recibir su cotización y averigüelo</h2>
+        <p>Podrá comunicarse con el representante que aparezca en pantalla</p>
         <form id="form" action="">
-            <h4>Nombre</h4>
-            <input id="name" type="text" aria-label="First name" class="form-control">
-            <h4>Monto</h4>
-            <input id="cot" type="text" aria-label="First name" class="form-control">
-            <input class="btn btn-primary" type="submit" value="Enviar">
+            <label for="name">Nombre</label>
+            <input id="name" type="text">
+            <input id="juridica" type="checkbox">
+            <label for="juridica">¿Persona Jurídica?</label>
+            <label for="aseguradora">Aseguradora</label>
+            <select id="aseguradora">
+                <option value="La Segunda">La Segunda</option>
+                <option value="La nueva">La nueva</option>
+                <option value="San Cristobal">San Cristobal</option>
+                <option value="Boston">Boston</option>
+                <option value="La caja">La caja</option>
+            </select>
+            <label for="riesgo">Tipo de Riesgo</label>
+            <select id="riesgo">
+                <option value="Todo riesgo">Todo riesgo</option>
+                <option value="Terceros">Terceros</option>
+                <option value="Básico">Básico</option>
+            </select>
         </form>
     </main>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
