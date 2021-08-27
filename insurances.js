@@ -65,9 +65,9 @@ function cotizar(e) {
     const juridica = $("#form #juridica").prop("checked");
     const cotizacion = (new Cotizacion(riesgo, juridica, aseguradora));
     const cotizar = cotizacion.cotizar();
-    const total = cotizar["total"];
+    const total = cotizar["total"].toFixed(2);
     const productor = cotizar["productor"];
-    const totalAnual = cotizacion.cotizarAnual();
+    const totalAnual = cotizacion.cotizarAnual().toFixed(2);
      
 
     $("#result").html(`<div><h2>Total por mes: $${total} <small>Precio por 12 meses: $${totalAnual}</small></h2><h3>Su productor: ${productor}</h3></div>`)
