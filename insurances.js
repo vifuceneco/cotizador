@@ -24,12 +24,10 @@ class Cotizacion {
     cotizar() {
         let dolarHoy = localStorage.getItem("dolar");
         const aseguradora = this.aseguradoras.filter(aseguradora => aseguradora.nombre === this.aseguradora, "")[0];
-        const riesgo = this.tiposDeRiesgo.filter(riesgo => riesgo.nombre === this.riesgo, "")[0];
-        console.log(aseguradora, riesgo);
+        const riesgo = this.tiposDeRiesgo.filter(riesgo => riesgo.nombre === this.riesgo, "")[0];        
 
         $.ajax("https://www.dolarsi.com/api/api.php?type=valoresprincipales").done(function(cotiz) {
             const nuevoDolar = cotiz.filter((dolar) => dolar["casa"].nombre === "Dolar Oficial")[0];
-            console.log(nuevoDolar)
             if(nuevoDolar && dolarHoy != nuevoDolar.casa.venta) {
                 dolarHoy = nuevoDolar.casa.venta;
                 localStorage.setItem("dolar", nuevoDolar.casa.venta);
@@ -41,7 +39,6 @@ class Cotizacion {
 
         if(riesgo && aseguradora) {
             dolarHoy = dolarHoy.replace(",", ".");
-            console.log(parseFloat(dolarHoy) , aseguradora.precio , riesgo.multiplicador)
             let total = parseFloat(dolarHoy) * aseguradora.precio * riesgo.multiplicador;
             if(this.personaJuridica) {
                 total = total * 1.21;
