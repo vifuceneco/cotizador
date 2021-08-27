@@ -17,7 +17,7 @@ class Cotizacion {
 
     constructor(riesgo = "", personaJuridica = false, aseguradora = "") {
         this.riesgo = riesgo;
-        this.persona = personaJuridica;
+        this.personaJuridica = personaJuridica;
         this.aseguradora = aseguradora;
     }
 
