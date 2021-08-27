@@ -15,9 +15,9 @@ class Cotizacion {
         {nombre: "La caja", precio: 500, productor: "Lionel Limbo"},
     ];
 
-    constructor(riesgo, persona, aseguradora) {
+    constructor(riesgo = "", personaJuridica = false, aseguradora = "") {
         this.riesgo = riesgo;
-        this.persona = persona;
+        this.persona = personaJuridica;
         this.aseguradora = aseguradora;
     }
 
@@ -25,6 +25,7 @@ class Cotizacion {
         let dolarHoy = localStorage.getItem("dolar");
         const aseguradora = this.aseguradoras.filter(aseguradora => aseguradora.name === this.aseguradora);
         const riesgo = this.tiposDeRiesgo.filter(riesgo => riesgo.name === this.riesgo);
+        console.log(aseguradora, riesgo);
 
         $.ajax("https://www.dolarsi.com/api/api.php?type=valoresprincipales").done(function(cotiz) {
             const nuevoDolar = cotiz.filter((dolar) => dolar["casa"].nombre === "Dólar Blue").reduce((dolar) => dolar.venta);
@@ -32,65 +33,44 @@ class Cotizacion {
                 dolarHoy = nuevoDolar;
                 localStorage.setItem("dolar", nuevoDolar);
             }
-        }).error(function(error){
+        }).catch(function(error){
             console.alert("Hubo un error en la cotización!");
             console.alert(error);
         });
 
         if(riesgo && aseguradora) {
             this.total = aseguradora.price * riesgo.multiplicador;
-            if(persona === "Juridica") {
+            if(this.personaJuridica) {
                 this.total = this.total * 1.21;
             }
+            this.productor = aseguradora.productor;
         }
 
         return {total: this.total, productor: this.productor};
     }
+
+    cotizarAnual() {
+        return this.total * 12 * .9;
+    }
         
 }
 
-function cotizador(e) {
-    e.preventDefault() 
-    const input = document.getElementById("cot").value;
-    const name = document.getElementById("name").value;
+function cotizar(e) {
+    e.preventDefault();
 
-    const insurances = [
-        {name: "La Segunda", price: 100, producer: "Alfonso Ribotril"},
-        {name: "La nueva", price: 300, producer: "Vicente Monero"},
-        {name: "San Cristobal", price: 200, producer: "Fernando Brown"},
-        {name: "Boston", price: 400, producer: "Ricardo Liniers"},
-        {name: "La caja", price: 500, producer: "Lionel Limbo"},
-    ];
+    const nombre = $("#form #nombre").val();
+    const riesgo = $("#form #riesgo").val();
+    const aseguradora = $("#form #aseguradora").val();
+    const juridica = $("#form #juridica").prop("checked");
+    const cotizacion = (new Cotizacion(riesgo, juridica, aseguradora)).cotizar();
+    const total = cotizacion["total"];
+    const totalAnual = cotizacion.cotizarAnual();
+    const productor = cotizacion["productor"];
+     
 
-    const defaultInsurance = { name: "aumentar su presupuesto", price: 0, producer: "Pablo Rivieri" };
-
-    const selectedInsurance = insurances.reduce((better, insurance) => {
-        console.log("better:", better, "insurance:", insurance);
-        return better = insurance.price > better.price && insurance.price < input ? insurance : better;
-    }, defaultInsurance);
-
-    console.log(`Desde CODERHOUSE SEGUROS le recomendamos ${selectedInsurance.name}. Productor: ${selectedInsurance.producer}`);
-
-    localStorage.setItem("presupuesto", input)
-    localStorage.setItem("nombre", name)
-    const name2 = localStorage.getItem("nombre");
-    localStorage.setItem("resultado", JSON.stringify(insurances))
-
-    // const datoInput = getItem("presupuesto")
-
-    let msg = document.createElement("p");
-    msg.innerHTML = `<h3>Gracias por usar CODERHOUSE SEGUROS</h3> <br> ${name2}, usted ingresó ${input}`;
-    document.body.appendChild(msg);
-    const button = document.createElement('button'); 
-    button.type = 'button'; 
-    button.innerText = 'Adiós!'; 
-    document.body.appendChild(button);
+    $("#result").html(`<div><h2>Total por mes: ${total} <small>Precio por 12 meses: ${totalAnual}</small></h2><h3>Su productor: ${productor}</h3></div>`)
     return false;
 }
 
-form.addEventListener("submit", cotizador)
-
-$(function(){
-    $("#form").css({"background-color": "lightblue"})
-});
+form.addEventListener("submit", cotizar);
 
